@@ -37,29 +37,17 @@ class MainFragment : Fragment() {
             dataStateListener.onDataStateChanged(state)
 
             state.data?.let { data ->
-                data.blogPosts?.let { blogs ->
-                    mainViewModel.setBlogListData(blogs)
-                }
+                data.getContentIfNotHandled()?.let { mainViewState ->
+                    mainViewState.blogPosts?.let { blogs ->
+                        mainViewModel.setBlogListData(blogs)
 
-                data.user?.let { user ->
-                    mainViewModel.setUser(user)
+                    }
+
+                    mainViewState.user?.let { user ->
+                        mainViewModel.setUser(user)
+                    }
                 }
             }
-
-            //Handle Error
-            state.message?.let { msg ->
-                {
-
-                }
-
-            }
-
-            state.loading.let { loading ->
-
-
-            }
-
-
         })
 
         mainViewModel.viewState.observe(viewLifecycleOwner, {

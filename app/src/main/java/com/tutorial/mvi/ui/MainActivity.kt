@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity(), DataStateListener {
         dataState?.let {
 
             it.message?.let { error ->
-                showToast(error)
+                error.getContentIfNotHandled()?.let { errorMsg ->
+                    showToast(errorMsg)
+                }
             }
 
-            it.loading.let { isLoading ->
-                showProgressBar(isLoading)
-            }
+            showProgressBar(it.loading)
         }
     }
 
