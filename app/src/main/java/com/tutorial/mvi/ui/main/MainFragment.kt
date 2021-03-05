@@ -1,13 +1,16 @@
 package com.tutorial.mvi.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.tutorial.mvi.R
+import com.tutorial.mvi.ui.DataStateListener
 
 class MainFragment : Fragment() {
     lateinit var mainViewModel: MainViewModel
+    lateinit var dataStateListener: DataStateListener
 
 
     override fun onCreateView(
@@ -31,8 +34,9 @@ class MainFragment : Fragment() {
     private fun subscribeObservers() {
         mainViewModel.dataState.observe(viewLifecycleOwner, { state ->
             println("DEBUG : Data State: $state")
-            //Handle Data
-            state.data?.let { data->
+            dataStateListener.onDataStateChanged(state)
+
+            state.data?.let { data ->
                 data.blogPosts?.let { blogs ->
                     mainViewModel.setBlogListData(blogs)
                 }
@@ -43,9 +47,10 @@ class MainFragment : Fragment() {
             }
 
             //Handle Error
-            state.message?.let { msg ->{
+            state.message?.let { msg ->
+                {
 
-            }
+                }
 
             }
 
@@ -88,6 +93,15 @@ class MainFragment : Fragment() {
 
     private fun triggerGetUserEvent() {
         mainViewModel.setStateEvent(MainStateEvent.GetUser("1"))
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            dataStateListener = context as DataStateListener
+        } catch (e: ClassCastException) {
+            println("DEBUG: $context must implement DataStateListener")
+        }
     }
 
 }
